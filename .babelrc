@@ -1,5 +1,5 @@
 {
-  "presets": ["es2015", "flow-vue"],
+  "presets": ["flow-vue"],
   "plugins": ["transform-vue-jsx", "syntax-dynamic-import"],
   "ignore": [
     "dist/*.js",

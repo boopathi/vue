@@ -2,7 +2,9 @@ const fs = require('fs')
 const path = require('path')
 const zlib = require('zlib')
 const rollup = require('rollup')
-const uglify = require('uglify-js')
+// const uglify = require('uglify-js')
+const { transform } = require('babel-core')
+const babili = require('babel-preset-babili')
 
 if (!fs.existsSync('dist')) {
   fs.mkdirSync('dist')
@@ -45,16 +47,12 @@ function buildEntry (config) {
   return rollup.rollup(config).then(bundle => {
     const code = bundle.generate(config).code
     if (isProd) {
-      var minified = (config.banner ? config.banner + '\n' : '') + uglify.minify(code, {
-        fromString: true,
-        output: {
-          screw_ie8: true,
-          ascii_only: true
-        },
-        compress: {
-          pure_funcs: ['makeMap']
-        }
-      }).code
+      var minified = (config.banner ? config.banner + '\n' : '') +
+        transform(code, {
+          presets: [babili],
+          babelrc: false,
+          minified: true
+        }).code
       return write(config.dest, minified, true)
     } else {
       return write(config.dest, code)
